@@ -84,7 +84,7 @@ export default function TaskDetails() {
       try {
         const res =
           await API.get(
-            `/tasks/${id}`
+            `/api/tasks/${id}`
           );
 
         setTask(
@@ -114,7 +114,7 @@ export default function TaskDetails() {
     async () => {
       try {
         const res =
-          await API.get("/team");
+          await API.get("/api/team");
 
         setUsers(
           res.data.users || []
