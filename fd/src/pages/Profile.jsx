@@ -131,14 +131,7 @@ export default function Profile() {
 
   // ================= FETCH DATA =================
 
-  useEffect(() => {
-    fetchProfile();
-
-    fetchTasks();
-
-    fetchUsers();
-  }, []);
-
+  
   // ================= PROFILE =================
 
   const fetchProfile =
@@ -182,7 +175,7 @@ export default function Profile() {
       try {
         const res =
           await API.get(
-            "/team"
+            "/api/team"
           );
 
         setUsers(
@@ -194,6 +187,19 @@ export default function Profile() {
         setUsers([]);
       }
     };
+
+  useEffect(() => {
+  const loadData = async () => {
+    await fetchProfile();
+
+    await fetchTasks();
+
+    await fetchUsers();
+  };
+
+  loadData();
+}, []);
+
 
   // ================= COUNTS =================
 
@@ -269,7 +275,7 @@ export default function Profile() {
       try {
         const res =
           await API.post(
-            "/team/create",
+            "/api/team/create",
             userForm
           );
 
