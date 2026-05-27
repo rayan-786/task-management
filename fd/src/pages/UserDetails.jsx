@@ -65,11 +65,6 @@ export default function UserDetails() {
     useState(true);
 
   // ================= FETCH =================
-
-  useEffect(() => {
-    getUserDetails();
-  }, [id]);
-
   const getUserDetails =
     async () => {
       try {
@@ -85,6 +80,16 @@ export default function UserDetails() {
         setLoading(false);
       }
     };
+
+ useEffect(() => {
+  const fetchData = async () => {
+    await getUserDetails();
+  };
+
+  fetchData();
+}, [id]);
+
+  
 
   // ================= LOADING =================
 

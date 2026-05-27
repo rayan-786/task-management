@@ -13,7 +13,6 @@ import {
 import {
   ArrowLeft,
   CalendarDays,
-  CheckCircle2,
   Users,
 } from "lucide-react";
 
@@ -70,16 +69,7 @@ export default function TaskDetails() {
     useState(true);
 
   // ================= FETCH =================
-
-  useEffect(() => {
-    fetchTask();
-
-    fetchUsers();
-  }, []);
-
-  // ================= FETCH TASK =================
-
-  const fetchTask =
+    const fetchTask =
     async () => {
       try {
         const res =
@@ -108,8 +98,7 @@ export default function TaskDetails() {
       }
     };
 
-  // ================= FETCH USERS =================
-
+    
   const fetchUsers =
     async () => {
       try {
@@ -123,6 +112,22 @@ export default function TaskDetails() {
         console.log(err);
       }
     };
+
+
+  useEffect(() => {
+  const loadData = async () => {
+    await fetchTask();
+    await fetchUsers();
+  };
+
+  loadData();
+}, []);
+
+  // ================= FETCH TASK =================
+
+
+
+  // ================= FETCH USERS =================
 
   // ================= TOGGLE USER =================
 
