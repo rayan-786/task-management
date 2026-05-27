@@ -43,7 +43,7 @@ export default function Register() {
 
       const res =
         await API.post(
-          "/auth/register",
+          "/api/auth/register",
           form
         );
 
