@@ -139,7 +139,7 @@ export default function Profile() {
       try {
         const res =
           await API.get(
-            "/auth/profile"
+            "/api/auth/profile"
           );
 
         setUser(res.data.user);
@@ -155,7 +155,7 @@ export default function Profile() {
       try {
         const res =
           await API.get(
-            "/tasks"
+            "/api/tasks"
           );
 
         setTasks(
@@ -232,7 +232,7 @@ export default function Profile() {
       try {
         const res =
           await API.post(
-            "/tasks/create",
+            "/api/tasks/create",
             {
               taskName:
                 taskForm.name,
@@ -304,7 +304,7 @@ export default function Profile() {
     async (id) => {
       try {
         await API.delete(
-          `/tasks/delete/${id}`
+          `/api/tasks/delete/${id}`
         );
 
         setTasks((prev) =>
@@ -325,7 +325,7 @@ export default function Profile() {
       try {
         const res =
           await API.put(
-            `/tasks/status/${id}`,
+            `/api/tasks/status/${id}`,
             {
               status:
                 "completed",
