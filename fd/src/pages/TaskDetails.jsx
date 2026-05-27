@@ -155,7 +155,7 @@ export default function TaskDetails() {
       try {
         const res =
           await API.put(
-            `/tasks/assign/${id}`,
+            `/api/tasks/assign/${id}`,
             {
               users:
                 selectedUsers,
@@ -187,7 +187,7 @@ export default function TaskDetails() {
       try {
         const res =
           await API.put(
-            `/tasks/status/${id}`,
+            `/api/tasks/status/${id}`,
             {
               status:
                 "completed",

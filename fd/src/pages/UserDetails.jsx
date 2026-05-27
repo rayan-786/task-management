@@ -75,7 +75,7 @@ export default function UserDetails() {
       try {
         const res =
           await API.get(
-            `/team/${id}`
+            `/api/team/${id}`
           );
 
         setData(res.data);
