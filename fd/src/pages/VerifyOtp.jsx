@@ -53,7 +53,7 @@ export default function VerifyOTP() {
       setLoading(true);
 
         await API.post(
-          "/auth/verify-otp",
+          "/api/auth/verify-otp",
           {
             email,
             otp: otp.trim(),

@@ -49,7 +49,7 @@ export default function ResetPassword() {
       setLoading(true);
 
       await API.post(
-        "/auth/reset-password",
+        "/api/auth/reset-password",
         {
           email:
             form.email.trim(),
