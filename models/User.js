@@ -1,189 +1,152 @@
-const mongoose =
-  require("mongoose");
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const validator = require("validator");
 
-const bcrypt =
-  require("bcrypt");
+const userSchema = new mongoose.Schema(
+  {
+    // ================= NAME =================
 
-const validator =
-  require("validator");
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+      trim: true,
+      minlength: 3,
+      maxlength: 50,
+    },
 
-const userSchema =
-  new mongoose.Schema(
-    {
-      // ================= NAME =================
+    // ================= EMAIL =================
 
-      name: {
-        type: String,
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      validate: [
+        validator.isEmail,
+        "Invalid email",
+      ],
+    },
 
-        required: [
-          true,
-          "Name is required",
-        ],
+    // ================= PHONE =================
 
-        trim: true,
+    phone: {
+      type: String,
+      default: null,
 
-        minlength: 3,
+      validate: {
+        validator: function (v) {
+          if (!v) return true;
 
-        maxlength: 50,
-      },
-
-      // ================= EMAIL =================
-
-      email: {
-        type: String,
-
-        required: [
-          true,
-          "Email is required",
-        ],
-
-        unique: true,
-
-        lowercase: true,
-
-        trim: true,
-
-        validate: [
-          validator.isEmail,
-          "Invalid email",
-        ],
-      },
-
-      // ================= PHONE =================
-
-      phone: {
-        type: String,
-
-        required: [
-          true,
-          "Phone is required",
-        ],
-
-        validate: {
-          validator: function (v) {
-
-            return /^[0-9]{10}$/.test(
-              v
-            );
-          },
-
-          message:
-            "Invalid phone number",
+          return /^[0-9]{10}$/.test(v);
         },
-      },
 
-      // ================= USERNAME =================
-
-      username: {
-        type: String,
-
-        unique: true,
-
-        sparse: true,
-
-        trim: true,
-      },
-
-      // ================= PASSWORD =================
-
-      password: {
-        type: String,
-
-        required: [
-          true,
-          "Password is required",
-        ],
-
-        minlength: 6,
-
-        select: false,
-      },
-
-      // ================= ROLE =================
-
-      role: {
-        type: String,
-
-        enum: [
-          "admin",
-          "manager",
-          "member",
-        ],
-
-        default: "member",
-      },
-
-      // ================= PROFILE =================
-
-      avatar: {
-        type: String,
-
-        default: "",
-      },
-
-      // ================= ACCOUNT =================
-
-      isVerified: {
-        type: Boolean,
-
-        default: false,
-      },
-
-      isActive: {
-        type: Boolean,
-
-        default: true,
-      },
-
-      // ================= OTP =================
-
-      otp: {
-        type: String,
-      },
-
-      otpExpire: {
-        type: Date,
+        message: "Invalid phone number",
       },
     },
 
-    {
-      timestamps: true,
-    }
-  );
+    // ================= USERNAME =================
+
+    username: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+    },
+
+    // ================= PASSWORD =================
+
+    password: {
+      type: String,
+      default: null,
+      select: false,
+    },
+
+    // ================= GITHUB =================
+
+    githubId: {
+      type: String,
+      default: null,
+    },
+
+    // ================= ROLE =================
+
+    role: {
+      type: String,
+
+      enum: [
+        "admin",
+        "manager",
+        "member",
+      ],
+
+      default: "member",
+    },
+
+    // ================= PROFILE =================
+
+    avatar: {
+      type: String,
+      default: "",
+    },
+
+    // ================= ACCOUNT =================
+
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+
+    // ================= OTP =================
+
+    otp: {
+      type: String,
+    },
+
+    otpExpire: {
+      type: Date,
+    },
+  },
+
+  {
+    timestamps: true,
+  }
+);
 
 // ================= HASH PASSWORD =================
 
 userSchema.pre(
   "save",
-
   async function () {
 
-    // PASSWORD MODIFY NAHI HUA
-
-    if (
-      !this.isModified(
-        "password"
-      )
-    ) {
+    if (!this.password) {
       return;
     }
 
-    // HASH PASSWORD
+    if (!this.isModified("password")) {
+      return;
+    }
 
-    this.password =
-      await bcrypt.hash(
-        this.password,
-        10
-      );
+    this.password = await bcrypt.hash(
+      this.password,
+      10
+    );
   }
 );
 
 // ================= MATCH PASSWORD =================
 
 userSchema.methods.comparePassword =
-  async function (
-    enteredPassword
-  ) {
+  async function (enteredPassword) {
+
+    if (!this.password) {
+      return false;
+    }
 
     return await bcrypt.compare(
       enteredPassword,
@@ -193,8 +156,7 @@ userSchema.methods.comparePassword =
 
 // ================= EXPORT =================
 
-module.exports =
-  mongoose.model(
-    "User",
-    userSchema
-  );
+module.exports = mongoose.model(
+  "User",
+  userSchema
+);
