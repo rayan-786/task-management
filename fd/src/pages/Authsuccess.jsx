@@ -12,16 +12,13 @@ function AuthSuccess() {
     const token = params.get("token");
 
     if (token) {
-      localStorage.setItem(
-        "token",
-        token
-      );
+      localStorage.setItem("token", token);
 
-      navigate("/dashboard");
+      navigate("/profile");
     } else {
       navigate("/login");
     }
-  }, []);
+  }, [navigate]);
 
   return <h2>Logging in...</h2>;
 }
