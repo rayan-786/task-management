@@ -12,6 +12,8 @@ const cors =
 const cookieParser =
   require("cookie-parser");
 
+  const passport = require("./config/Passport");
+
 // ================= APP =================
 
 const app = express();
@@ -26,14 +28,26 @@ app.use(express.json());
 
 app.use(cookieParser());
 
+app.use(passport.initialize());
+
 // CORS
+
+const allowedOrigins = [
+  
+  "https://task-management-kappa-beige.vercel.app",
+  "https://rayan-auth.vercel.app",
+];
 
 app.use(
   cors({
-    origin:
-      process.env.FRONTEND_URL,
-
-     credentials: true,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
   })
 );
 
