@@ -41,9 +41,9 @@ export default function Login() {
   };
 
   const githubLogin = () => {
-    window.location.href =
-      "http://localhost:5000/api/auth/github";
-  };
+  window.location.href =
+    `${import.meta.env.VITE_API_URL}/api/auth/github`;
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-100 flex items-center justify-center px-4">
