@@ -21,6 +21,8 @@ import UserDetails from "./pages/UserDetails";
 
 import TaskDetails from "./pages/TaskDetails";
 
+import AuthSuccess  from "./pages/Authsuccess";
+
 
 
 // ================= PRIVATE ROUTE =================
@@ -141,6 +143,10 @@ function App() {
               <ResetPassword />
             </PublicRoute>
           }
+        />
+        <Route
+          path="/auth-success"
+          element={<AuthSuccess />}
         />
 
         {/* ================= PROTECTED ================= */}

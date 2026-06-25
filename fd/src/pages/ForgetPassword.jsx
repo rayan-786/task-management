@@ -1,154 +1,119 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import API from "../api";
-import { motion } from "framer-motion";
-import { Mail, ShieldCheck } from "lucide-react";
+import { Mail } from "lucide-react";
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
-  
-
-  
-
-
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
     try {
-
       setLoading(true);
 
       await API.post(
         "/api/auth/forgot-password",
-        {
-          email,
-        }
+        { email }
       );
 
-      alert("OTP sent to your email 📩");
+      alert("OTP sent to your email");
 
       navigate("/reset-password", {
         state: { email },
       });
-
     } catch (err) {
-
       alert(
         err.response?.data?.msg ||
           "Something went wrong"
       );
-
     } finally {
-
       setLoading(false);
     }
   };
 
   return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
 
-    <div className="flex min-h-screen items-center justify-center overflow-hidden bg-[#020617] px-4">
+      <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-xl">
 
-      {/* BACKGROUND BLUR */}
+        {/* Header */}
 
-      <div className="absolute left-[-100px] top-[-100px] h-72 w-72 rounded-full bg-cyan-500/30 blur-3xl" />
+        <div className="mb-8">
 
-      <div className="absolute bottom-[-100px] right-[-100px] h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" />
+          <h1 className="text-3xl font-bold text-slate-900">
+            Forgot Password
+          </h1>
 
-      {/* CARD */}
-
-      <motion.form
-
-        initial={{
-          opacity: 0,
-          y: 40,
-        }}
-
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-
-        transition={{
-          duration: 0.5,
-        }}
-
-        onSubmit={handleSubmit}
-
-        className="relative z-10 w-full max-w-md rounded-[32px] border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl"
-      >
-
-        {/* ICON */}
-
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/30">
-
-          <ShieldCheck className="h-10 w-10 text-white" />
+          <p className="mt-2 text-sm text-slate-500">
+            Enter your email address and we'll send
+            you an OTP to reset your password.
+          </p>
 
         </div>
 
-        {/* HEADING */}
+        {/* Form */}
 
-        <h2 className="mt-6 text-center text-4xl font-black text-white">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5"
+        >
 
-          Forgot Password
+          <div>
 
-        </h2>
+            <label className="block mb-2 text-sm font-medium text-slate-700">
+              Email Address
+            </label>
 
-        <p className="mt-3 text-center text-sm text-slate-300">
+            <div className="relative">
 
-          Enter your email to receive OTP verification code
+              <Mail
+                size={18}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+              />
 
-        </p>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) =>
+                  setEmail(e.target.value)
+                }
+                placeholder="john@example.com"
+                className="w-full rounded-xl border border-slate-300 pl-11 pr-4 py-3 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              />
 
-        {/* INPUT */}
-
-        <div className="mt-8">
-
-          <label className="mb-2 block text-sm font-semibold text-slate-300">
-
-            Email Address
-
-          </label>
-
-          <div className="flex items-center rounded-2xl border border-white/10 bg-white/5 px-4">
-
-            <Mail className="h-5 w-5 text-cyan-400" />
-
-            <input
-              type="email"
-              placeholder="Enter your email"
-              required
-              value={email}
-              onChange={(e) =>
-                setEmail(e.target.value)
-              }
-              className="w-full bg-transparent px-4 py-4 text-white outline-none placeholder:text-slate-500"
-            />
+            </div>
 
           </div>
 
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-xl bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-70"
+          >
+            {loading
+              ? "Sending OTP..."
+              : "Send OTP"}
+          </button>
+
+        </form>
+
+        <div className="mt-6 text-center">
+
+          <Link
+            to="/login"
+            className="text-sm text-slate-500 hover:text-slate-700"
+          >
+            Back to Login
+          </Link>
+
         </div>
 
-        {/* BUTTON */}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="mt-8 w-full rounded-2xl bg-cyan-500 py-4 text-lg font-bold text-white shadow-lg shadow-cyan-500/30 transition hover:scale-[1.02] hover:bg-cyan-600 disabled:opacity-60"
-        >
-
-          {loading
-            ? "Sending OTP..."
-            : "Send OTP 🚀"}
-
-        </button>
-
-      </motion.form>
+      </div>
 
     </div>
   );
