@@ -2,14 +2,14 @@ version: "3.9"
 
 services:
   backend:
-    build: ./bk
+    build: bk
     container_name: backend
 
     ports:
       - "5000:5000"
 
     env_file:
-      - ./bk/.env
+      - bk/.env
 
     volumes:
       - ./bk:/app
