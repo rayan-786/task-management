@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-  X,
   Copy,
   Check,
   Eye,
@@ -8,13 +7,8 @@ import {
   Trash2,
   Copy as DuplicateIcon,
   MessageSquare,
-  History,
   Send,
   Calendar,
-  Tag,
-  Bookmark,
-  ExternalLink,
-  Edit2,
 } from "lucide-react";
 import API from "../../api";
 import SlideOver from "../ui/SlideOver";
@@ -51,7 +45,7 @@ export default function IssueDetailDrawer({
   const [labels, setLabels] = useState("");
   const [copied, setCopied] = useState(false);
 
-  // Tab: comments vs activity
+  // Comments
   const [activeTab, setActiveTab] = useState("comments");
   const [newComment, setNewComment] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
@@ -216,19 +210,19 @@ export default function IssueDetailDrawer({
     <SlideOver
       isOpen={isOpen}
       onClose={onClose}
-      width="max-w-4xl"
+      width="w-full sm:max-w-2xl lg:max-w-4xl"
       title={
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded border border-blue-200 dark:border-blue-900/60">
+        <div className="flex items-center gap-2.5">
+          <span className="font-mono text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
             {issue?.key || issueKey}
           </span>
           <button
             onClick={copyKey}
-            className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
+            className="p-1 text-slate-400 hover:text-slate-700 transition"
             title="Copy Key"
           >
             {copied ? (
-              <Check className="w-3.5 h-3.5 text-emerald-500" />
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
             ) : (
               <Copy className="w-3.5 h-3.5" />
             )}
@@ -237,11 +231,13 @@ export default function IssueDetailDrawer({
       }
     >
       {loading && !issue ? (
-        <div className="p-12 text-center text-sm text-slate-400">Loading issue details...</div>
+        <div className="p-12 text-center text-xs text-slate-400 font-medium">
+          Loading issue details...
+        </div>
       ) : (
         <div className="flex flex-col lg:flex-row h-full">
           {/* Main Content Area */}
-          <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+          <div className="flex-1 p-4 sm:p-6 space-y-5 overflow-y-auto">
             {/* Title (Inline editable) */}
             <div>
               <input
@@ -253,18 +249,18 @@ export default function IssueDetailDrawer({
                     handleFieldSave("title", title.trim());
                   }
                 }}
-                className="w-full text-xl font-bold bg-transparent border-b border-transparent hover:border-slate-300 dark:hover:border-slate-700 focus:border-blue-500 outline-none transition py-1 text-slate-900 dark:text-slate-100"
+                className="w-full text-lg sm:text-xl font-bold bg-transparent border-b border-transparent hover:border-slate-300 focus:border-blue-500 outline-none transition py-1 text-slate-900"
                 placeholder="Issue Title"
               />
             </div>
 
             {/* Description */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 Description
               </label>
               <textarea
-                rows={6}
+                rows={5}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 onBlur={() => {
@@ -273,39 +269,39 @@ export default function IssueDetailDrawer({
                   }
                 }}
                 placeholder="Add details, acceptance criteria, or links..."
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-3 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                className="w-full rounded-xl border border-slate-300 bg-slate-50/50 p-3 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition placeholder:text-slate-400"
               />
             </div>
 
-            {/* Comments & Activity Tabs */}
-            <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800">
-              <div className="flex items-center gap-4 text-xs font-semibold border-b border-slate-200 dark:border-slate-800 pb-2">
+            {/* Comments Section */}
+            <div className="space-y-4 pt-4 border-t border-slate-100">
+              <div className="flex items-center gap-4 text-xs font-bold border-b border-slate-100 pb-2">
                 <button
                   onClick={() => setActiveTab("comments")}
                   className={`flex items-center gap-1.5 pb-2 -mb-2 border-b-2 transition ${
                     activeTab === "comments"
-                      ? "border-blue-600 text-blue-600 dark:text-blue-400"
-                      : "border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300"
+                      ? "border-blue-600 text-blue-600"
+                      : "border-transparent text-slate-500 hover:text-slate-800"
                   }`}
                 >
-                  <MessageSquare className="w-4 h-4" />
+                  <MessageSquare className="w-3.5 h-3.5" />
                   <span>Comments ({comments.length})</span>
                 </button>
               </div>
 
               {/* Comments stream */}
               {activeTab === "comments" && (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {/* Add Comment Input */}
                   <form onSubmit={handleAddComment} className="flex gap-2.5 items-start">
                     <Avatar user={user} size="sm" />
                     <div className="flex-1">
                       <textarea
                         rows={2}
-                        placeholder="Add a comment... (use @name to mention team members)"
+                        placeholder="Add a comment..."
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
-                        className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition placeholder:text-slate-400"
                       />
                       {newComment.trim() && (
                         <div className="mt-2 flex justify-end">
@@ -323,16 +319,16 @@ export default function IssueDetailDrawer({
                   </form>
 
                   {/* List of comments */}
-                  <div className="space-y-3 pt-2">
+                  <div className="space-y-2.5 pt-2">
                     {comments.map((c) => (
                       <div
                         key={c._id}
-                        className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/60"
+                        className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-100"
                       >
                         <Avatar user={c.user} size="sm" />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+                            <span className="text-xs font-bold text-slate-900">
                               {c.user?.name || "User"}
                             </span>
                             <div className="flex items-center gap-2">
@@ -342,7 +338,7 @@ export default function IssueDetailDrawer({
                               {(c.user?._id === user?._id || user?.role === "admin") && (
                                 <button
                                   onClick={() => handleDeleteComment(c._id)}
-                                  className="text-slate-400 hover:text-rose-500 transition"
+                                  className="text-slate-400 hover:text-rose-600 transition p-0.5"
                                   title="Delete Comment"
                                 >
                                   <Trash2 className="w-3 h-3" />
@@ -350,7 +346,7 @@ export default function IssueDetailDrawer({
                               )}
                             </div>
                           </div>
-                          <p className="text-xs text-slate-700 dark:text-slate-300 mt-1 whitespace-pre-wrap">
+                          <p className="text-xs text-slate-700 mt-1 whitespace-pre-wrap leading-relaxed">
                             {c.text}
                           </p>
                         </div>
@@ -363,10 +359,10 @@ export default function IssueDetailDrawer({
           </div>
 
           {/* Right Rail: Metadata & Quick Pickers */}
-          <div className="w-full lg:w-72 bg-slate-50/70 dark:bg-slate-950/40 border-t lg:border-t-0 lg:border-l border-slate-200 dark:border-slate-800 p-5 space-y-5 shrink-0 text-xs">
+          <div className="w-full lg:w-72 bg-slate-50/70 border-t lg:border-t-0 lg:border-l border-slate-200 p-4 sm:p-5 space-y-4 shrink-0 text-xs">
             {/* Status Picker */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                 Status
               </label>
               <select
@@ -375,7 +371,7 @@ export default function IssueDetailDrawer({
                   setStatus(e.target.value);
                   handleFieldSave("status", e.target.value);
                 }}
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-medium outline-none cursor-pointer"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold outline-none cursor-pointer hover:border-slate-400 transition"
               >
                 <option value="backlog">Backlog</option>
                 <option value="todo">To Do</option>
@@ -388,7 +384,7 @@ export default function IssueDetailDrawer({
 
             {/* Priority Picker */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                 Priority
               </label>
               <select
@@ -397,7 +393,7 @@ export default function IssueDetailDrawer({
                   setPriority(e.target.value);
                   handleFieldSave("priority", e.target.value);
                 }}
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-medium outline-none cursor-pointer"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold outline-none cursor-pointer hover:border-slate-400 transition"
               >
                 <option value="lowest">Lowest</option>
                 <option value="low">Low</option>
@@ -409,7 +405,7 @@ export default function IssueDetailDrawer({
 
             {/* Assignee Picker */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                 Assignee
               </label>
               <select
@@ -418,7 +414,7 @@ export default function IssueDetailDrawer({
                   setAssignee(e.target.value);
                   handleFieldSave("assignee", e.target.value || null);
                 }}
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-medium outline-none cursor-pointer"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold outline-none cursor-pointer hover:border-slate-400 transition"
               >
                 <option value="">Unassigned</option>
                 {members.map((m) => (
@@ -431,7 +427,7 @@ export default function IssueDetailDrawer({
 
             {/* Sprint Picker */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                 Sprint
               </label>
               <select
@@ -440,7 +436,7 @@ export default function IssueDetailDrawer({
                   setSprint(e.target.value);
                   handleFieldSave("sprint", e.target.value || null);
                 }}
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-medium outline-none cursor-pointer"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold outline-none cursor-pointer hover:border-slate-400 transition"
               >
                 <option value="">None (Backlog)</option>
                 {sprints.map((s) => (
@@ -453,7 +449,7 @@ export default function IssueDetailDrawer({
 
             {/* Story Points */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                 Story Points
               </label>
               <input
@@ -468,14 +464,14 @@ export default function IssueDetailDrawer({
                     handleFieldSave("storyPoints", num);
                   }
                 }}
-                placeholder="Fibonacci points (e.g. 5)"
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs outline-none"
+                placeholder="Points (e.g. 5)"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
               />
             </div>
 
             {/* Due Date */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                 Due Date
               </label>
               <input
@@ -485,15 +481,15 @@ export default function IssueDetailDrawer({
                   setDueDate(e.target.value);
                   handleFieldSave("dueDate", e.target.value || null);
                 }}
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs outline-none"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
               />
             </div>
 
             {/* Actions: Watchers, Duplicate, Delete */}
-            <div className="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+            <div className="pt-3 border-t border-slate-200 space-y-2">
               <button
                 onClick={handleToggleWatch}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-700 dark:text-slate-300"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition text-slate-700 font-semibold text-xs shadow-2xs"
               >
                 {isWatching ? (
                   <>
@@ -510,7 +506,7 @@ export default function IssueDetailDrawer({
 
               <button
                 onClick={handleDuplicate}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-700 dark:text-slate-300"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition text-slate-700 font-semibold text-xs shadow-2xs"
               >
                 <DuplicateIcon className="w-3.5 h-3.5" />
                 <span>Duplicate Issue</span>
@@ -518,7 +514,7 @@ export default function IssueDetailDrawer({
 
               <button
                 onClick={handleDeleteIssue}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-rose-200 dark:border-rose-900/60 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 transition font-semibold text-xs"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Delete Issue</span>

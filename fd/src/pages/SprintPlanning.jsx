@@ -6,11 +6,7 @@ import {
   Play,
   CheckCircle2,
   Calendar,
-  MoreHorizontal,
-  ChevronDown,
-  ChevronRight,
-  ArrowRight,
-  Trash2,
+  Layers,
 } from "lucide-react";
 import API from "../api";
 import { useWorkspace } from "../context/WorkspaceContext";
@@ -20,6 +16,7 @@ import Button from "../components/ui/Button";
 import Modal from "../components/ui/Modal";
 import { Input, Textarea } from "../components/ui/Input";
 import IssueDetailDrawer from "../components/issues/IssueDetailDrawer";
+import { TableSkeleton } from "../components/ui/Skeleton";
 
 export default function SprintPlanning() {
   const { projectId } = useParams();
@@ -28,7 +25,7 @@ export default function SprintPlanning() {
 
   const [sprints, setSprints] = useState([]);
   const [backlogIssues, setBacklogIssues] = useState([]);
-  const [sprintIssues, setSprintIssues] = useState({}); // sprintId -> issues[]
+  const [sprintIssues, setSprintIssues] = useState({});
   const [loading, setLoading] = useState(true);
 
   // Modals
@@ -40,7 +37,7 @@ export default function SprintPlanning() {
   const [creatingSprint, setCreatingSprint] = useState(false);
 
   // Complete sprint modal
-  const [completeSprintModal, setCompleteSprintModal] = useState(null); // sprint object
+  const [completeSprintModal, setCompleteSprintModal] = useState(null);
   const [moveIncompleteTo, setMoveIncompleteTo] = useState("");
   const [completing, setCompleting] = useState(false);
 
@@ -99,6 +96,8 @@ export default function SprintPlanning() {
       if (res.data.success) {
         setSprintName("");
         setSprintGoal("");
+        setStartDate("");
+        setEndDate("");
         setCreateSprintModal(false);
         fetchSprintData();
       }
@@ -148,15 +147,19 @@ export default function SprintPlanning() {
     }
   };
 
+  if (loading) {
+    return <TableSkeleton />;
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">
             Sprint Planning & Backlog
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             Organize work into iteration cycles, manage backlog, and track burnup.
           </p>
         </div>
@@ -180,22 +183,22 @@ export default function SprintPlanning() {
           return (
             <div
               key={sprint._id}
-              className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-2xs"
+              className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-2xs"
             >
               {/* Sprint Header Banner */}
-              <div className="p-4 bg-slate-50/70 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="p-4 sm:p-5 bg-slate-50/75 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2.5">
-                    <span className="font-bold text-sm text-slate-900 dark:text-slate-100">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <span className="font-bold text-sm sm:text-base text-slate-900">
                       {sprint.name}
                     </span>
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
                         sprint.status === "active"
-                          ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
+                          ? "bg-emerald-100 text-emerald-800"
                           : sprint.status === "completed"
-                          ? "bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
-                          : "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                          ? "bg-slate-200 text-slate-700"
+                          : "bg-blue-100 text-blue-800"
                       }`}
                     >
                       {sprint.status}
@@ -203,20 +206,19 @@ export default function SprintPlanning() {
                   </div>
 
                   {sprint.goal && (
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      <span className="font-medium text-slate-600 dark:text-slate-300">Goal:</span>{" "}
-                      {sprint.goal}
+                    <p className="text-xs text-slate-600">
+                      <strong className="text-slate-700">Goal:</strong> {sprint.goal}
                     </p>
                   )}
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
                   {/* Progress Stats */}
-                  <div className="text-right hidden sm:block">
-                    <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  <div className="text-left md:text-right">
+                    <div className="text-xs font-bold text-slate-800">
                       {completedCount} of {sIssues.length} issues ({progress}%)
                     </div>
-                    <div className="text-[10px] text-slate-400">
+                    <div className="text-[11px] text-slate-500 font-medium">
                       {completedPoints} / {totalPoints} story points
                     </div>
                   </div>
@@ -247,15 +249,15 @@ export default function SprintPlanning() {
               </div>
 
               {/* Progress Bar */}
-              <div className="w-full bg-slate-100 dark:bg-slate-800 h-1">
+              <div className="w-full bg-slate-100 h-1.5">
                 <div
-                  className="bg-emerald-500 h-1 transition-all duration-300"
+                  className="bg-emerald-500 h-1.5 transition-all duration-300 rounded-r-full"
                   style={{ width: `${progress}%` }}
                 />
               </div>
 
               {/* Issues List in this Sprint */}
-              <div className="divide-y divide-slate-100 dark:divide-slate-800/60">
+              <div className="divide-y divide-slate-100">
                 {sIssues.map((issue) => (
                   <div
                     key={issue._id}
@@ -263,33 +265,33 @@ export default function SprintPlanning() {
                       setSelectedIssueKey(issue.key);
                       setSearchParams({ issueKey: issue.key });
                     }}
-                    className="p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 flex items-center justify-between gap-4 transition cursor-pointer text-xs"
+                    className="p-3.5 hover:bg-slate-50 flex items-center justify-between gap-3 sm:gap-4 transition cursor-pointer text-xs group"
                   >
-                    <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <IssueTypeBadge type={issue.type} />
-                      <span className="font-mono font-semibold text-blue-600 dark:text-blue-400">
+                      <span className="font-mono font-bold text-blue-600 shrink-0">
                         {issue.key}
                       </span>
-                      <span className="truncate font-medium text-slate-800 dark:text-slate-200">
+                      <span className="truncate font-medium text-slate-900 group-hover:text-blue-600 transition">
                         {issue.title}
                       </span>
                     </div>
 
                     <div
-                      className="flex items-center gap-3 shrink-0"
+                      className="flex items-center gap-2 sm:gap-3 shrink-0"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <StatusBadge status={issue.status} size="xs" />
                       <PriorityBadge priority={issue.priority} showLabel={false} size="xs" />
                       {issue.storyPoints !== null && (
-                        <span className="font-mono text-slate-400 text-[11px]">
+                        <span className="font-mono text-slate-500 text-[11px] font-semibold hidden sm:inline">
                           {issue.storyPoints} pts
                         </span>
                       )}
                       <Avatar user={issue.assignee} size="xs" />
                       <button
                         onClick={() => moveIssueToSprint(issue._id, null)}
-                        className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-[11px] hover:underline"
+                        className="text-slate-400 hover:text-slate-700 text-[11px] hover:underline font-medium"
                         title="Move to Backlog"
                       >
                         To Backlog
@@ -309,19 +311,20 @@ export default function SprintPlanning() {
         })}
 
         {/* Backlog Section */}
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-2xs">
-          <div className="p-4 bg-slate-50/70 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-2xs">
+          <div className="p-4 bg-slate-50/75 border-b border-slate-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-sm text-slate-900 dark:text-slate-100">
+              <Layers className="w-4 h-4 text-slate-500" />
+              <span className="font-bold text-sm text-slate-900">
                 Backlog
               </span>
-              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+              <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-slate-200 text-slate-700">
                 {backlogIssues.length} issues
               </span>
             </div>
           </div>
 
-          <div className="divide-y divide-slate-100 dark:divide-slate-800/60">
+          <div className="divide-y divide-slate-100">
             {backlogIssues.map((issue) => (
               <div
                 key={issue._id}
@@ -329,26 +332,26 @@ export default function SprintPlanning() {
                   setSelectedIssueKey(issue.key);
                   setSearchParams({ issueKey: issue.key });
                 }}
-                className="p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 flex items-center justify-between gap-4 transition cursor-pointer text-xs"
+                className="p-3.5 hover:bg-slate-50 flex items-center justify-between gap-3 sm:gap-4 transition cursor-pointer text-xs group"
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <IssueTypeBadge type={issue.type} />
-                  <span className="font-mono font-semibold text-blue-600 dark:text-blue-400">
+                  <span className="font-mono font-bold text-blue-600 shrink-0">
                     {issue.key}
                   </span>
-                  <span className="truncate font-medium text-slate-800 dark:text-slate-200">
+                  <span className="truncate font-medium text-slate-900 group-hover:text-blue-600 transition">
                     {issue.title}
                   </span>
                 </div>
 
                 <div
-                  className="flex items-center gap-3 shrink-0"
+                  className="flex items-center gap-2 sm:gap-3 shrink-0"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <StatusBadge status={issue.status} size="xs" />
                   <PriorityBadge priority={issue.priority} showLabel={false} size="xs" />
                   {issue.storyPoints !== null && (
-                    <span className="font-mono text-slate-400 text-[11px]">
+                    <span className="font-mono text-slate-500 text-[11px] font-semibold hidden sm:inline">
                       {issue.storyPoints} pts
                     </span>
                   )}
@@ -361,7 +364,7 @@ export default function SprintPlanning() {
                         if (e.target.value) moveIssueToSprint(issue._id, e.target.value);
                       }}
                       defaultValue=""
-                      className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded px-2 py-1 outline-none cursor-pointer"
+                      className="text-xs bg-slate-100 text-slate-700 rounded-md px-2 py-1 outline-none cursor-pointer border border-slate-200 hover:border-slate-300 font-medium"
                     >
                       <option value="" disabled>
                         Move to Sprint...
@@ -409,7 +412,7 @@ export default function SprintPlanning() {
             onChange={(e) => setSprintGoal(e.target.value)}
           />
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="Start Date"
               type="date"
@@ -424,7 +427,7 @@ export default function SprintPlanning() {
             />
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-3">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
             <Button
               variant="outline"
               onClick={() => setCreateSprintModal(false)}
@@ -446,19 +449,19 @@ export default function SprintPlanning() {
         title={`Complete ${completeSprintModal?.name}`}
       >
         <div className="space-y-4">
-          <p className="text-sm text-slate-600 dark:text-slate-300">
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
             Open issues that were not resolved in this sprint can either be rolled over to the next
             sprint or moved back to the backlog.
           </p>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Move incomplete issues to:
             </label>
             <select
               value={moveIncompleteTo}
               onChange={(e) => setMoveIncompleteTo(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2 text-sm outline-none"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition cursor-pointer"
             >
               <option value="">Backlog</option>
               {sprints
@@ -473,7 +476,7 @@ export default function SprintPlanning() {
             </select>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-3">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
             <Button
               variant="outline"
               onClick={() => setCompleteSprintModal(null)}

@@ -18,6 +18,7 @@ import AppLayout from "./components/layout/AppLayout";
 // Auth Pages
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import VerifyOTP from "./pages/VerifyOtp";
 import ForgotPassword from "./pages/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword";
 import AuthSuccess from "./pages/Authsuccess";
@@ -65,16 +66,16 @@ function PublicRoute({ children }) {
 
 function NotFound() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 p-4">
-      <div className="text-center space-y-3">
-        <h1 className="text-7xl font-extrabold text-slate-300 dark:text-slate-800">404</h1>
-        <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200">Page Not Found</h2>
-        <p className="text-xs text-slate-500 max-w-sm mx-auto">
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
+      <div className="text-center space-y-3 bg-white p-8 sm:p-10 rounded-2xl border border-slate-200 shadow-sm max-w-md w-full">
+        <h1 className="text-6xl sm:text-7xl font-extrabold text-slate-300">404</h1>
+        <h2 className="text-lg sm:text-xl font-bold text-slate-900">Page Not Found</h2>
+        <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto">
           The task, project, or workspace view you requested does not exist or has been moved.
         </p>
         <a
           href="/dashboard"
-          className="inline-block mt-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold"
+          className="inline-block mt-3 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs"
         >
           Return to Dashboard
         </a>
@@ -108,6 +109,14 @@ export default function App() {
                   element={
                     <PublicRoute>
                       <Register />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/verify-otp"
+                  element={
+                    <PublicRoute>
+                      <VerifyOTP />
                     </PublicRoute>
                   }
                 />
@@ -235,11 +244,7 @@ export default function App() {
                 {/* Legacy Routes (backward compatible) */}
                 <Route
                   path="/profile"
-                  element={
-                    <PrivateRoute>
-                      <Profile />
-                    </PrivateRoute>
-                  }
+                  element={<Navigate to="/settings" replace />}
                 />
                 <Route
                   path="/users/:id"

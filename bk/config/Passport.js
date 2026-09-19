@@ -10,7 +10,7 @@ passport.use(
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL:
-        "https://task-manage.duckdns.org/api/auth/github/callback",
+        "https://taskflow-backend.duckdns.org/api/auth/github/callback",
       scope: ["user:email"],
     },
 

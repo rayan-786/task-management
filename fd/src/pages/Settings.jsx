@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { User, Building2, CreditCard, Shield, Check, AlertTriangle, KeyRound } from "lucide-react";
+import { User, Building2, CreditCard, Check, AlertTriangle, KeyRound } from "lucide-react";
 import API from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useWorkspace } from "../context/WorkspaceContext";
@@ -131,22 +131,22 @@ export default function Settings() {
   return (
     <div className="space-y-6 max-w-4xl">
       <div>
-        <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+        <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">
           Account & Workspace Settings
         </h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
           Manage profile preferences, workspace configurations, and subscription plan limits.
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-px text-xs font-semibold">
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-px text-xs font-semibold overflow-x-auto no-scrollbar">
         <button
           onClick={() => setTab("profile")}
-          className={`flex items-center gap-2 px-4 py-2 border-b-2 transition ${
+          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition whitespace-nowrap ${
             activeTab === "profile"
-              ? "border-blue-600 text-blue-600 dark:text-blue-400"
-              : "border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+              ? "border-blue-600 text-blue-600 font-bold"
+              : "border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300"
           }`}
         >
           <User className="w-4 h-4" />
@@ -155,10 +155,10 @@ export default function Settings() {
 
         <button
           onClick={() => setTab("workspace")}
-          className={`flex items-center gap-2 px-4 py-2 border-b-2 transition ${
+          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition whitespace-nowrap ${
             activeTab === "workspace"
-              ? "border-blue-600 text-blue-600 dark:text-blue-400"
-              : "border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+              ? "border-blue-600 text-blue-600 font-bold"
+              : "border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300"
           }`}
         >
           <Building2 className="w-4 h-4" />
@@ -167,10 +167,10 @@ export default function Settings() {
 
         <button
           onClick={() => setTab("billing")}
-          className={`flex items-center gap-2 px-4 py-2 border-b-2 transition ${
+          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition whitespace-nowrap ${
             activeTab === "billing"
-              ? "border-blue-600 text-blue-600 dark:text-blue-400"
-              : "border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+              ? "border-blue-600 text-blue-600 font-bold"
+              : "border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300"
           }`}
         >
           <CreditCard className="w-4 h-4" />
@@ -182,23 +182,23 @@ export default function Settings() {
       {activeTab === "profile" && (
         <div className="space-y-6 animate-in fade-in duration-150">
           {/* Personal Info Card */}
-          <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-5">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+          <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-5">
+            <h3 className="text-sm sm:text-base font-bold text-slate-900">
               Personal Information
             </h3>
 
             <div className="flex items-center gap-4">
               <Avatar user={user} size="lg" />
               <div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                <p className="text-sm font-bold text-slate-900">
                   {user?.name}
                 </p>
-                <p className="text-xs text-slate-400">{user?.email}</p>
+                <p className="text-xs text-slate-500">{user?.email}</p>
               </div>
             </div>
 
             {profileMsg && (
-              <div className="p-3 text-xs rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 border border-emerald-200 dark:border-emerald-800">
+              <div className="p-3 text-xs rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
                 {profileMsg}
               </div>
             )}
@@ -212,17 +212,17 @@ export default function Settings() {
               />
 
               <Input
-                label="Email"
+                label="Email Address"
                 value={user?.email || ""}
                 disabled
-                helperText="Email cannot be changed"
+                helperText="Email address cannot be changed."
               />
 
               <Input
                 label="Phone Number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="10 digit phone"
+                placeholder="+1 (555) 000-0000"
               />
 
               <Button type="submit" loading={savingProfile} size="sm">
@@ -232,18 +232,18 @@ export default function Settings() {
           </div>
 
           {/* Change Password Card */}
-          <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-4 max-w-lg">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <KeyRound className="w-4 h-4 text-blue-500" />
+          <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-4 max-w-lg">
+            <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+              <KeyRound className="w-4 h-4 text-blue-600" />
               <span>Change Password</span>
             </h3>
 
             {passwordMsg.text && (
               <div
-                className={`p-3 text-xs rounded-lg border ${
+                className={`p-3 text-xs rounded-xl border font-medium ${
                   passwordMsg.type === "error"
-                    ? "bg-rose-50 dark:bg-rose-950/40 text-rose-600 border-rose-200 dark:border-rose-800"
-                    : "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 border-emerald-200 dark:border-emerald-800"
+                    ? "bg-rose-50 text-rose-700 border-rose-200"
+                    : "bg-emerald-50 text-emerald-700 border-emerald-200"
                 }`}
               >
                 {passwordMsg.text}
@@ -286,13 +286,13 @@ export default function Settings() {
       {/* Tab 2: Workspace Settings */}
       {activeTab === "workspace" && (
         <div className="space-y-6 animate-in fade-in duration-150">
-          <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-4 max-w-xl">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+          <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-4 max-w-xl">
+            <h3 className="text-sm sm:text-base font-bold text-slate-900">
               Workspace Profile
             </h3>
 
             {wsMsg && (
-              <div className="p-3 text-xs rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 border border-emerald-200 dark:border-emerald-800">
+              <div className="p-3 text-xs rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
                 {wsMsg}
               </div>
             )}
@@ -310,7 +310,7 @@ export default function Settings() {
                 label="Workspace Slug (URL key)"
                 value={activeWorkspace?.slug || ""}
                 disabled
-                helperText="Generated unique slug for this tenant"
+                helperText="Generated unique slug for this tenant."
               />
 
               <Textarea
@@ -331,18 +331,18 @@ export default function Settings() {
 
           {/* Danger Zone */}
           {userRole === "owner" && (
-            <div className="p-6 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/20 dark:bg-rose-950/10 shadow-2xs space-y-3 max-w-xl">
-              <h3 className="text-sm font-bold text-rose-600 dark:text-rose-400 flex items-center gap-2">
+            <div className="p-5 sm:p-6 rounded-2xl border border-rose-200 bg-rose-50/20 shadow-2xs space-y-3 max-w-xl">
+              <h3 className="text-sm font-bold text-rose-700 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4" />
                 <span>Danger Zone</span>
               </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Deleting this workspace permanently deletes all projects, issues, sprints, and team
                 memberships.
               </p>
               <button
                 onClick={handleDeleteWorkspace}
-                className="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition"
+                className="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition shadow-xs shadow-rose-500/20 cursor-pointer"
               >
                 Delete Workspace
               </button>
@@ -359,22 +359,22 @@ export default function Settings() {
             <div
               className={`p-6 rounded-2xl border ${
                 activeWorkspace?.plan === "free"
-                  ? "border-blue-600 ring-2 ring-blue-500/20 bg-blue-50/20 dark:bg-blue-950/20"
-                  : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+                  ? "border-blue-600 ring-2 ring-blue-500/20 bg-blue-50/30"
+                  : "border-slate-200 bg-white"
               } shadow-2xs space-y-4`}
             >
               <div className="flex items-center justify-between">
-                <h4 className="font-bold text-base text-slate-900 dark:text-slate-100">Free</h4>
+                <h4 className="font-bold text-base text-slate-900">Free</h4>
                 {activeWorkspace?.plan === "free" && (
                   <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-600 text-white">
                     Current Plan
                   </span>
                 )}
               </div>
-              <div className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
-                $0 <span className="text-xs font-normal text-slate-400">/ forever</span>
+              <div className="text-3xl font-extrabold text-slate-900">
+                $0 <span className="text-xs font-normal text-slate-500">/ forever</span>
               </div>
-              <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-400">
+              <ul className="space-y-2.5 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-emerald-500 shrink-0" />
                   <span>Up to 10 Workspace Members</span>
@@ -394,22 +394,22 @@ export default function Settings() {
             <div
               className={`p-6 rounded-2xl border ${
                 activeWorkspace?.plan === "pro"
-                  ? "border-blue-600 ring-2 ring-blue-500/20 bg-blue-50/20 dark:bg-blue-950/20"
-                  : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+                  ? "border-blue-600 ring-2 ring-blue-500/20 bg-blue-50/30"
+                  : "border-slate-200 bg-white"
               } shadow-2xs space-y-4`}
             >
               <div className="flex items-center justify-between">
-                <h4 className="font-bold text-base text-slate-900 dark:text-slate-100">Pro</h4>
+                <h4 className="font-bold text-base text-slate-900">Pro</h4>
                 {activeWorkspace?.plan === "pro" && (
                   <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-600 text-white">
                     Current Plan
                   </span>
                 )}
               </div>
-              <div className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
-                $12 <span className="text-xs font-normal text-slate-400">/ user / mo</span>
+              <div className="text-3xl font-extrabold text-slate-900">
+                $12 <span className="text-xs font-normal text-slate-500">/ user / mo</span>
               </div>
-              <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-400">
+              <ul className="space-y-2.5 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-emerald-500 shrink-0" />
                   <span>Unlimited Workspace Members</span>
@@ -430,12 +430,12 @@ export default function Settings() {
             </div>
 
             {/* Enterprise */}
-            <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-4">
-              <h4 className="font-bold text-base text-slate-900 dark:text-slate-100">Enterprise</h4>
-              <div className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
+            <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-4">
+              <h4 className="font-bold text-base text-slate-900">Enterprise</h4>
+              <div className="text-3xl font-extrabold text-slate-900">
                 Custom
               </div>
-              <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-400">
+              <ul className="space-y-2.5 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-emerald-500 shrink-0" />
                   <span>Dedicated Multi-Region Database</span>

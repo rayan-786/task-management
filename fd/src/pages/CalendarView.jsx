@@ -3,8 +3,8 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
 import API from "../api";
 import { useWorkspace } from "../context/WorkspaceContext";
-import { PriorityBadge, IssueTypeBadge } from "../components/ui/Badge";
 import IssueDetailDrawer from "../components/issues/IssueDetailDrawer";
+import { TableSkeleton } from "../components/ui/Skeleton";
 
 export default function CalendarView() {
   const { projectId } = useParams();
@@ -51,39 +51,45 @@ export default function CalendarView() {
 
   const monthName = currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
+  if (loading) {
+    return <TableSkeleton />;
+  }
+
   return (
     <div className="space-y-4">
       {/* Calendar Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">
             {activeProject?.name || "Project"} — Calendar
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             Visualize deadlines and sprint milestones mapped across the monthly schedule.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
             onClick={today}
-            className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs"
           >
             Today
           </button>
-          <div className="flex items-center border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden bg-white dark:bg-slate-900">
+          <div className="flex items-center border border-slate-300 rounded-lg overflow-hidden bg-white shadow-2xs">
             <button
               onClick={prevMonth}
-              className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition"
+              className="p-1.5 hover:bg-slate-100 text-slate-600 transition"
+              aria-label="Previous month"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="px-3 text-xs font-semibold min-w-[130px] text-center">
+            <span className="px-3 text-xs font-bold min-w-[130px] text-center text-slate-900">
               {monthName}
             </span>
             <button
               onClick={nextMonth}
-              className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition"
+              className="p-1.5 hover:bg-slate-100 text-slate-600 transition"
+              aria-label="Next month"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -91,10 +97,10 @@ export default function CalendarView() {
         </div>
       </div>
 
-      {/* Calendar Grid */}
-      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-2xs">
+      {/* Calendar Grid Container */}
+      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-2xs">
         {/* Days of week */}
-        <div className="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center py-2.5">
+        <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50/75 text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center py-2.5">
           <div>Sun</div>
           <div>Mon</div>
           <div>Tue</div>
@@ -105,12 +111,12 @@ export default function CalendarView() {
         </div>
 
         {/* Days cells */}
-        <div className="grid grid-cols-7 divide-x divide-y divide-slate-100 dark:divide-slate-800/60">
+        <div className="grid grid-cols-7 divide-x divide-y divide-slate-100">
           {/* Empty prefix cells */}
           {Array.from({ length: firstDayIndex }).map((_, idx) => (
             <div
               key={`empty-${idx}`}
-              className="min-h-[100px] bg-slate-50/40 dark:bg-slate-900/30 p-2"
+              className="min-h-[70px] sm:min-h-[105px] bg-slate-50/40 p-1 sm:p-2"
             />
           ))}
 
@@ -134,42 +140,49 @@ export default function CalendarView() {
             return (
               <div
                 key={dayNumber}
-                className={`min-h-[100px] p-2 transition hover:bg-slate-50/70 dark:hover:bg-slate-800/30 flex flex-col ${
-                  isToday ? "bg-blue-50/30 dark:bg-blue-950/20" : ""
+                className={`min-h-[70px] sm:min-h-[105px] p-1.5 sm:p-2 transition hover:bg-slate-50/80 flex flex-col ${
+                  isToday ? "bg-blue-50/30 font-bold" : ""
                 }`}
               >
-                <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center justify-between mb-1">
                   <span
-                    className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-semibold ${
+                    className={`w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-[11px] sm:text-xs ${
                       isToday
-                        ? "bg-blue-600 text-white"
-                        : "text-slate-700 dark:text-slate-300"
+                        ? "bg-blue-600 text-white font-bold"
+                        : "text-slate-700 font-semibold"
                     }`}
                   >
                     {dayNumber}
                   </span>
                   {dayIssues.length > 0 && (
-                    <span className="text-[10px] text-slate-400 font-mono">
+                    <span className="text-[10px] text-blue-600 font-bold sm:hidden">
+                      {dayIssues.length}
+                    </span>
+                  )}
+                  {dayIssues.length > 0 && (
+                    <span className="text-[10px] text-slate-400 font-semibold hidden sm:inline">
                       {dayIssues.length} items
                     </span>
                   )}
                 </div>
 
-                <div className="space-y-1 overflow-y-auto max-h-24">
+                <div className="space-y-1 overflow-y-auto max-h-16 sm:max-h-20">
                   {dayIssues.map((iss) => (
                     <div
                       key={iss._id}
                       onClick={() => {
                         setSelectedIssueKey(iss.key);
-                        setSearchParams({ issueKey: iss.key });
+                        setSearchParams({ issueKey: issue.key });
                       }}
-                      className="p-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-blue-100 dark:hover:bg-blue-900/40 border border-slate-200/60 dark:border-slate-700/60 text-[11px] cursor-pointer transition truncate flex items-center gap-1"
+                      className="p-1 rounded bg-slate-100 hover:bg-blue-50 border border-slate-200/80 text-[10px] sm:text-[11px] cursor-pointer transition truncate flex items-center gap-1 group"
                       title={iss.title}
                     >
-                      <span className="font-mono font-bold text-blue-600 dark:text-blue-400 shrink-0">
+                      <span className="font-mono font-bold text-blue-600 shrink-0">
                         {iss.key}
                       </span>
-                      <span className="truncate">{iss.title}</span>
+                      <span className="truncate text-slate-800 group-hover:text-blue-600 hidden sm:inline font-medium">
+                        {iss.title}
+                      </span>
                     </div>
                   ))}
                 </div>

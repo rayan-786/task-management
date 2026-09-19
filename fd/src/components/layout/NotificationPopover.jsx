@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Bell, CheckCheck, Clock, CheckCircle2 } from "lucide-react";
+import { Bell, CheckCheck, Clock } from "lucide-react";
 import API from "../../api";
 import { useSocket } from "../../context/SocketContext";
 import Avatar from "../ui/Avatar";
@@ -77,26 +77,26 @@ export default function NotificationPopover() {
     <div className="relative" ref={popoverRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+        className="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition"
         title="Notifications"
       >
-        <Bell className="w-5 h-5" />
+        <Bell className="w-4 h-4" />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-rose-500 rounded-full animate-pulse">
+          <span className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[9px] font-bold text-white bg-rose-500 rounded-full">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl z-50 overflow-hidden animate-in zoom-in-95 duration-100">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-800">
+        <div className="absolute right-0 mt-1.5 w-72 sm:w-88 rounded-2xl bg-white border border-slate-200 shadow-xl z-50 overflow-hidden animate-in zoom-in-95 duration-100">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/60">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+              <span className="font-bold text-xs text-slate-900">
                 Notifications
               </span>
               {unreadCount > 0 && (
-                <span className="px-1.5 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-blue-100 text-blue-700">
                   {unreadCount} new
                 </span>
               )}
@@ -104,17 +104,17 @@ export default function NotificationPopover() {
             {unreadCount > 0 && (
               <button
                 onClick={markAllRead}
-                className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                className="flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-700"
               >
                 <CheckCheck className="w-3.5 h-3.5" />
-                <span>Mark all as read</span>
+                <span>Mark all read</span>
               </button>
             )}
           </div>
 
-          <div className="max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60">
+          <div className="max-h-72 overflow-y-auto divide-y divide-slate-100">
             {notifications.length === 0 ? (
-              <div className="p-8 text-center text-sm text-slate-400 dark:text-slate-500">
+              <div className="p-8 text-center text-xs text-slate-400">
                 No notifications yet
               </div>
             ) : (
@@ -122,16 +122,16 @@ export default function NotificationPopover() {
                 <div
                   key={n._id}
                   onClick={() => markSingleRead(n._id)}
-                  className={`p-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition cursor-pointer flex items-start gap-3 ${
-                    !n.isRead ? "bg-blue-50/40 dark:bg-blue-950/20" : ""
+                  className={`p-3 hover:bg-slate-50 transition cursor-pointer flex items-start gap-2.5 ${
+                    !n.isRead ? "bg-blue-50/30" : ""
                   }`}
                 >
                   <Avatar user={n.actor} size="sm" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                    <p className="text-xs font-semibold text-slate-900">
                       {n.title}
                     </p>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 line-clamp-2">
+                    <p className="text-xs text-slate-600 mt-0.5 line-clamp-2">
                       {n.message}
                     </p>
                     <span className="text-[10px] text-slate-400 mt-1 block">

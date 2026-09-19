@@ -42,36 +42,36 @@ export default function AcceptInvite() {
   }, [token, navigate, refreshWorkspaces]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950">
-      <div className="w-full max-w-md p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl text-center space-y-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50 text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+      <div className="w-full max-w-md p-8 rounded-2xl bg-white border border-slate-200/90 shadow-lg shadow-slate-200/50 text-center space-y-4">
         {loading ? (
-          <div className="space-y-3">
+          <div className="space-y-3 py-4">
             <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto" />
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-sm font-semibold text-slate-700">
               Validating your workspace invitation...
             </p>
           </div>
         ) : status.success ? (
-          <div className="space-y-3">
+          <div className="space-y-3 py-2">
             <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto" />
-            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+            <h2 className="text-lg font-bold text-slate-900">
               Welcome to the Workspace!
             </h2>
-            <p className="text-xs text-slate-500">{status.msg}</p>
-            <p className="text-xs text-blue-600 animate-pulse">
+            <p className="text-xs text-slate-600">{status.msg}</p>
+            <p className="text-xs font-semibold text-blue-600 animate-pulse pt-2">
               Redirecting to your dashboard...
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-3 py-2">
             <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
-            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+            <h2 className="text-lg font-bold text-slate-900">
               Invitation Error
             </h2>
-            <p className="text-xs text-rose-600">{status.msg}</p>
+            <p className="text-xs text-rose-600 font-medium">{status.msg}</p>
             <button
               onClick={() => navigate("/dashboard")}
-              className="mt-4 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold"
+              className="mt-4 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs"
             >
               Go to Dashboard
             </button>

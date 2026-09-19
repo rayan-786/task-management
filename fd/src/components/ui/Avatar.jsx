@@ -16,14 +16,13 @@ export default function Avatar({
     .toUpperCase();
 
   const sizeStyles = {
-    xs: "w-5 h-5 text-[10px]",
-    sm: "w-6 h-6 text-xs",
+    xs: "w-5 h-5 text-[9px]",
+    sm: "w-6 h-6 text-[10px]",
     md: "w-8 h-8 text-xs",
     lg: "w-10 h-10 text-sm",
     xl: "w-14 h-14 text-base",
   };
 
-  // Consistent background color based on name hash
   const getBgColor = (str) => {
     const colors = [
       "bg-blue-600 text-white",
@@ -32,7 +31,8 @@ export default function Avatar({
       "bg-indigo-600 text-white",
       "bg-amber-600 text-white",
       "bg-rose-600 text-white",
-      "bg-cyan-600 text-white",
+      "bg-sky-600 text-white",
+      "bg-teal-600 text-white",
     ];
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -46,7 +46,7 @@ export default function Avatar({
       <img
         src={avatarUrl}
         alt={displayName}
-        className={`rounded-full object-cover shrink-0 ring-1 ring-slate-200 dark:ring-slate-700 ${
+        className={`rounded-full object-cover shrink-0 ring-1 ring-slate-200 ${
           sizeStyles[size] || sizeStyles.md
         } ${className}`}
         onError={(e) => {
@@ -59,7 +59,7 @@ export default function Avatar({
   return (
     <div
       title={displayName}
-      className={`rounded-full flex items-center justify-center font-semibold shrink-0 ring-1 ring-white dark:ring-slate-900 ${
+      className={`rounded-full flex items-center justify-center font-bold shrink-0 ring-1 ring-white shadow-2xs select-none ${
         getBgColor(displayName)
       } ${sizeStyles[size] || sizeStyles.md} ${className}`}
     >

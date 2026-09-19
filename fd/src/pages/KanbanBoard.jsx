@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { Plus, MoreHorizontal, AlertCircle } from "lucide-react";
+import { Plus, CheckSquare } from "lucide-react";
 import API from "../api";
 import { useWorkspace } from "../context/WorkspaceContext";
 import { useSocket } from "../context/SocketContext";
 import IssueCard from "../components/issues/IssueCard";
 import IssueFilters from "../components/issues/IssueFilters";
 import IssueDetailDrawer from "../components/issues/IssueDetailDrawer";
+import { KanbanSkeleton } from "../components/ui/Skeleton";
 
 const COLUMNS = [
   { id: "backlog", title: "Backlog", dot: "bg-slate-400" },
@@ -27,6 +28,9 @@ export default function KanbanBoard() {
   const [selectedIssueKey, setSelectedIssueKey] = useState(
     searchParams.get("issueKey") || null
   );
+
+  // Dragging states for visual feedback
+  const [dragOverCol, setDragOverCol] = useState(null);
 
   // Quick inline add card per column
   const [quickAddCol, setQuickAddCol] = useState(null);
@@ -153,12 +157,23 @@ export default function KanbanBoard() {
   };
 
   // Drag and drop handlers
-  const handleDragOver = (e) => {
+  const handleDragOver = (e, colId) => {
     e.preventDefault();
+    if (dragOverCol !== colId) {
+      setDragOverCol(colId);
+    }
+  };
+
+  const handleDragLeave = (e, colId) => {
+    if (e.currentTarget.contains(e.relatedTarget)) return;
+    if (dragOverCol === colId) {
+      setDragOverCol(null);
+    }
   };
 
   const handleDrop = async (e, targetStatus) => {
     e.preventDefault();
+    setDragOverCol(null);
     const issueId = e.dataTransfer.getData("text/plain");
     if (!issueId) return;
 
@@ -208,15 +223,19 @@ export default function KanbanBoard() {
     }
   };
 
+  if (loading) {
+    return <KanbanSkeleton />;
+  }
+
   return (
     <div className="space-y-4">
-      {/* Header & Filters */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header & Description */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">
             {activeProject?.name || "Project Board"}
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             Manage issues, track progress, and drag cards across development stages.
           </p>
         </div>
@@ -232,41 +251,47 @@ export default function KanbanBoard() {
         sprints={sprints}
       />
 
-      {/* Kanban Board Columns Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 items-start pb-6">
+      {/* Kanban Board Columns Container: Responsive snap scroll on mobile, responsive grid on desktop */}
+      <div className="flex overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 xl:grid-cols-5 gap-4 items-start pb-6 no-scrollbar">
         {COLUMNS.map((col) => {
           const colIssues = issues.filter((i) => i.status === col.id);
+          const isOver = dragOverCol === col.id;
 
           return (
             <div
               key={col.id}
-              onDragOver={handleDragOver}
+              onDragOver={(e) => handleDragOver(e, col.id)}
+              onDragLeave={(e) => handleDragLeave(e, col.id)}
               onDrop={(e) => handleDrop(e, col.id)}
-              className="flex flex-col rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800/80 p-3 min-h-[500px]"
+              className={`flex flex-col rounded-2xl bg-slate-100/60 border transition-all p-3 min-h-[500px] w-72 sm:w-80 md:w-auto shrink-0 snap-start ${
+                isOver
+                  ? "border-blue-500 bg-blue-50/40 ring-2 ring-blue-500/20"
+                  : "border-slate-200"
+              }`}
             >
               {/* Column Header */}
               <div className="flex items-center justify-between mb-3 px-1">
                 <div className="flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full ${col.dot}`} />
-                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200 tracking-wide uppercase">
+                  <span className={`w-2.5 h-2.5 rounded-full ${col.dot} shadow-2xs`} />
+                  <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                     {col.title}
                   </span>
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400">
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white border border-slate-200 text-slate-600 shadow-2xs">
                     {colIssues.length}
                   </span>
                 </div>
                 <button
                   onClick={() => setQuickAddCol(quickAddCol === col.id ? null : col.id)}
-                  className="p-1 rounded text-slate-400 hover:text-blue-600 hover:bg-white dark:hover:bg-slate-800 transition"
+                  className="p-1 rounded-md text-slate-400 hover:text-blue-600 hover:bg-white transition"
                   title="Quick add issue"
                 >
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Quick Add Input */}
               {quickAddCol === col.id && (
-                <div className="mb-3 p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-blue-400 shadow-sm animate-in fade-in duration-150">
+                <div className="mb-3 p-3 rounded-xl bg-white border border-blue-400 shadow-sm animate-in fade-in duration-150">
                   <input
                     autoFocus
                     type="text"
@@ -277,19 +302,19 @@ export default function KanbanBoard() {
                       if (e.key === "Enter") handleQuickAdd(col.id);
                       if (e.key === "Escape") setQuickAddCol(null);
                     }}
-                    className="w-full text-xs bg-transparent outline-none text-slate-900 dark:text-slate-100 mb-2"
+                    className="w-full text-xs bg-transparent outline-none text-slate-900 mb-2.5 font-medium placeholder:text-slate-400"
                   />
                   <div className="flex items-center justify-end gap-1.5">
                     <button
                       onClick={() => setQuickAddCol(null)}
-                      className="px-2 py-1 text-[11px] text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition"
+                      className="px-2.5 py-1 text-[11px] font-medium text-slate-500 hover:bg-slate-100 rounded-md transition"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={() => handleQuickAdd(col.id)}
                       disabled={quickLoading || !quickTitle.trim()}
-                      className="px-2.5 py-1 text-[11px] bg-blue-600 hover:bg-blue-700 text-white rounded font-medium transition disabled:opacity-50"
+                      className="px-3 py-1 text-[11px] bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold transition disabled:opacity-50 shadow-2xs"
                     >
                       Add
                     </button>
@@ -308,8 +333,8 @@ export default function KanbanBoard() {
                 ))}
 
                 {colIssues.length === 0 && (
-                  <div className="h-24 flex items-center justify-center border border-dashed border-slate-200 dark:border-slate-800/80 rounded-lg text-[11px] text-slate-400 select-none">
-                    Drop cards here
+                  <div className="h-28 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl text-[11px] font-medium text-slate-400 select-none">
+                    <span>Drop cards here</span>
                   </div>
                 )}
               </div>

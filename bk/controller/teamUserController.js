@@ -76,7 +76,7 @@ exports.createTeamUser =
           to: user.email,
 
           subject:
-            "Welcome To TaskFlow 🚀",
+            "Welcome To TaskFlow ",
 
           html: `
             <div style="
@@ -87,7 +87,7 @@ exports.createTeamUser =
             ">
 
               <h1 style="color:#38bdf8;">
-                Welcome ${user.firstName} 👋
+                Welcome ${user.firstName} 
               </h1>
 
               <p>
@@ -126,7 +126,7 @@ exports.createTeamUser =
               </div>
 
               <p style="margin-top:20px;">
-                Welcome aboard 🚀
+                Welcome aboard 
               </p>
 
             </div>

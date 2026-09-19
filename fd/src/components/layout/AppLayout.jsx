@@ -9,6 +9,7 @@ export default function AppLayout({ children }) {
   const { refreshProjects } = useWorkspace();
   const [searchOpen, setSearchOpen] = useState(false);
   const [createIssueOpen, setCreateIssueOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -30,17 +31,21 @@ export default function AppLayout({ children }) {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 antialiased">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900">
       {/* Top Navigation */}
       <TopNav
         onOpenSearch={() => setSearchOpen(true)}
         onOpenCreateIssue={() => setCreateIssueOpen(true)}
+        onToggleMobileSidebar={() => setMobileSidebarOpen((prev) => !prev)}
       />
 
       {/* Main Content Area with Sidebar */}
-      <div className="flex-1 flex">
-        <Sidebar />
-        <main className="flex-1 overflow-x-hidden p-6 max-w-7xl mx-auto w-full">
+      <div className="flex-1 flex min-w-0">
+        <Sidebar
+          mobileOpen={mobileSidebarOpen}
+          onCloseMobile={() => setMobileSidebarOpen(false)}
+        />
+        <main className="flex-1 min-w-0 overflow-x-hidden p-3.5 sm:p-5 md:p-6 max-w-7xl mx-auto w-full">
           {children}
         </main>
       </div>

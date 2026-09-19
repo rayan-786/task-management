@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Share2, Check, ExternalLink } from "lucide-react";
+import { ArrowLeft, Share2, Check } from "lucide-react";
 import API from "../api";
 import { useWorkspace } from "../context/WorkspaceContext";
 import { useAuth } from "../context/AuthContext";
@@ -67,13 +67,17 @@ export default function IssueDetailPage() {
   };
 
   if (loading) {
-    return <div className="p-12 text-center text-sm text-slate-400">Loading issue...</div>;
+    return (
+      <div className="p-12 text-center text-xs text-slate-400 font-medium">
+        Loading issue details...
+      </div>
+    );
   }
 
   if (!issue) {
     return (
-      <div className="p-12 text-center space-y-3">
-        <p className="text-base font-semibold text-slate-800 dark:text-slate-200">
+      <div className="p-12 text-center space-y-3 bg-white rounded-2xl border border-slate-200">
+        <p className="text-base font-bold text-slate-900">
           Issue {key} not found
         </p>
         <Button onClick={() => navigate("/dashboard")} size="sm">
@@ -89,7 +93,7 @@ export default function IssueDetailPage() {
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transition"
+          className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back</span>
@@ -98,11 +102,11 @@ export default function IssueDetailPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={copyUrl}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs"
           >
             {copied ? (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-500" />
+                <Check className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Link Copied</span>
               </>
             ) : (
@@ -118,43 +122,43 @@ export default function IssueDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-4">
+          <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-4">
             <div className="flex items-center gap-2">
               <IssueTypeBadge type={issue.type} />
-              <span className="font-mono text-xs font-bold text-blue-600 dark:text-blue-400">
+              <span className="font-mono text-xs font-bold text-blue-600">
                 {issue.key}
               </span>
             </div>
 
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
               {issue.title}
             </h1>
 
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+            <div className="pt-3 border-t border-slate-100">
+              <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
                 Description
               </h3>
-              <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
                 {issue.description || "No description provided."}
               </p>
             </div>
           </div>
 
           {/* Comments Section */}
-          <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+          <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-4">
+            <h3 className="text-sm font-bold text-slate-900">
               Comments ({comments.length})
             </h3>
 
-            <form onSubmit={handleAddComment} className="flex gap-3">
+            <form onSubmit={handleAddComment} className="flex gap-2.5 items-start">
               <Avatar user={user} size="sm" />
               <div className="flex-1">
                 <textarea
                   rows={2}
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Leave a comment... (use @name to mention team members)"
-                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 p-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+                  placeholder="Leave a comment..."
+                  className="w-full rounded-lg border border-slate-300 p-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white text-slate-900 placeholder:text-slate-400"
                 />
                 {newComment.trim() && (
                   <div className="mt-2 flex justify-end">
@@ -166,20 +170,20 @@ export default function IssueDetailPage() {
               </div>
             </form>
 
-            <div className="space-y-3 pt-2 divide-y divide-slate-100 dark:divide-slate-800/60">
+            <div className="space-y-3 pt-2 divide-y divide-slate-100">
               {comments.map((c) => (
-                <div key={c._id} className="pt-3 flex items-start gap-3">
+                <div key={c._id} className="pt-3 flex items-start gap-2.5">
                   <Avatar user={c.user} size="sm" />
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-slate-900 dark:text-slate-100">
+                      <span className="font-bold text-slate-900">
                         {c.user?.name}
                       </span>
                       <span className="text-[10px] text-slate-400">
                         {new Date(c.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-700 dark:text-slate-300 mt-1 whitespace-pre-wrap">
+                    <p className="text-xs text-slate-700 mt-1 whitespace-pre-wrap leading-relaxed">
                       {c.text}
                     </p>
                   </div>
@@ -190,56 +194,56 @@ export default function IssueDetailPage() {
         </div>
 
         {/* Sidebar Metadata */}
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs p-5 space-y-4 text-xs">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-2xs p-5 space-y-4 text-xs">
           <div>
-            <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
               Status
             </span>
             <StatusBadge status={issue.status} />
           </div>
 
           <div>
-            <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
               Priority
             </span>
             <PriorityBadge priority={issue.priority} />
           </div>
 
           <div>
-            <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
               Assignee
             </span>
             <div className="flex items-center gap-2">
               <Avatar user={issue.assignee} size="sm" />
-              <span className="font-medium text-slate-800 dark:text-slate-200">
+              <span className="font-semibold text-slate-800">
                 {issue.assignee?.name || "Unassigned"}
               </span>
             </div>
           </div>
 
           <div>
-            <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
               Sprint
             </span>
-            <span className="text-slate-700 dark:text-slate-300 font-medium">
+            <span className="text-slate-800 font-medium">
               {issue.sprint?.name || "Backlog"}
             </span>
           </div>
 
           <div>
-            <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
               Story Points
             </span>
-            <span className="font-mono text-slate-700 dark:text-slate-300">
+            <span className="font-mono font-bold text-slate-800">
               {issue.storyPoints !== null ? `${issue.storyPoints} points` : "None"}
             </span>
           </div>
 
           <div>
-            <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
               Due Date
             </span>
-            <span className="text-slate-700 dark:text-slate-300">
+            <span className="text-slate-800 font-medium">
               {issue.dueDate ? new Date(issue.dueDate).toLocaleDateString() : "No due date"}
             </span>
           </div>

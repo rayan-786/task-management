@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Users, UserPlus, Mail, Shield, Trash2, Clock, Check, X } from "lucide-react";
+import { Users, UserPlus, Mail, Trash2, Check, X, Shield } from "lucide-react";
 import API from "../api";
 import { useWorkspace } from "../context/WorkspaceContext";
 import { useAuth } from "../context/AuthContext";
@@ -8,6 +8,7 @@ import Button from "../components/ui/Button";
 import Modal from "../components/ui/Modal";
 import { Input } from "../components/ui/Input";
 import Select from "../components/ui/Select";
+import { TableSkeleton } from "../components/ui/Skeleton";
 
 export default function TeamManagement() {
   const { user } = useAuth();
@@ -129,16 +130,20 @@ export default function TeamManagement() {
 
   const canManageMembers = ["owner", "admin"].includes(userRole);
 
+  if (loading) {
+    return <TableSkeleton />;
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">
             Team Members & Access
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Manage members, roles (Owner, Admin, Member, Viewer), and pending invitations for{" "}
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Manage members, roles (Owner, Admin, Member, Viewer), and invitations for{" "}
             <strong>{activeWorkspace?.name}</strong>.
           </p>
         </div>
@@ -152,17 +157,17 @@ export default function TeamManagement() {
       </div>
 
       {/* Members Directory Table */}
-      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+      <div className="rounded-xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
+        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/75">
+          <h3 className="text-sm font-bold text-slate-900">
             Workspace Members ({members.length})
           </h3>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+          <table className="w-full text-left text-xs border-collapse min-w-[650px]">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
+              <tr className="border-b border-slate-200 bg-slate-50/50 text-slate-500 font-bold uppercase tracking-wider text-[11px]">
                 <th className="py-3 px-4">User</th>
                 <th className="py-3 px-4">Email</th>
                 <th className="py-3 px-4">Role</th>
@@ -170,7 +175,7 @@ export default function TeamManagement() {
                 {canManageMembers && <th className="py-3 px-4 w-20">Actions</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+            <tbody className="divide-y divide-slate-100">
               {members.map((m) => {
                 const isCurrentUser = m.user?._id === user?._id;
                 const isOwner = m.role === "owner";
@@ -178,35 +183,35 @@ export default function TeamManagement() {
                 return (
                   <tr
                     key={m.id}
-                    className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition"
+                    className="hover:bg-slate-50/80 transition"
                   >
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
                         <Avatar user={m.user} size="sm" />
                         <div>
-                          <p className="font-semibold text-slate-900 dark:text-slate-100">
+                          <p className="font-bold text-slate-900">
                             {m.user?.name} {isCurrentUser && "(You)"}
                           </p>
-                          <p className="text-[11px] text-slate-400">
+                          <p className="text-[11px] text-slate-400 font-medium">
                             @{m.user?.username || m.user?.email?.split("@")[0]}
                           </p>
                         </div>
                       </div>
                     </td>
 
-                    <td className="py-3 px-4 text-slate-600 dark:text-slate-300">
+                    <td className="py-3 px-4 text-slate-600 font-medium">
                       {m.user?.email}
                     </td>
 
                     <td className="py-3 px-4">
                       {isOwner || !canManageMembers || isCurrentUser ? (
                         <span
-                          className={`px-2.5 py-1 rounded-md font-semibold text-[11px] uppercase tracking-wider ${
+                          className={`px-2.5 py-1 rounded-md font-bold text-[10px] uppercase tracking-wider ${
                             isOwner
-                              ? "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300"
+                              ? "bg-purple-100 text-purple-700"
                               : m.role === "admin"
-                              ? "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
-                              : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                              ? "bg-blue-100 text-blue-700"
+                              : "bg-slate-100 text-slate-700"
                           }`}
                         >
                           {m.role}
@@ -215,7 +220,7 @@ export default function TeamManagement() {
                         <select
                           value={m.role}
                           onChange={(e) => handleRoleChange(m.id, e.target.value)}
-                          className="px-2 py-1 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold outline-none cursor-pointer"
+                          className="px-2 py-1 rounded-lg border border-slate-300 bg-white text-xs font-semibold outline-none cursor-pointer shadow-2xs hover:border-slate-400"
                         >
                           <option value="admin">Admin</option>
                           <option value="member">Member</option>
@@ -224,7 +229,7 @@ export default function TeamManagement() {
                       )}
                     </td>
 
-                    <td className="py-3 px-4 text-slate-400">
+                    <td className="py-3 px-4 text-slate-500">
                       {new Date(m.joinedAt).toLocaleDateString()}
                     </td>
 
@@ -233,7 +238,7 @@ export default function TeamManagement() {
                         {!isOwner && !isCurrentUser && (
                           <button
                             onClick={() => handleRemoveMember(m.id, m.user?.name)}
-                            className="p-1 text-slate-400 hover:text-rose-600 transition"
+                            className="p-1.5 text-slate-400 hover:text-rose-600 rounded-md hover:bg-rose-50 transition"
                             title="Remove from workspace"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -251,39 +256,39 @@ export default function TeamManagement() {
 
       {/* Pending Invitations Section */}
       {canManageMembers && invitations.length > 0 && (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
-          <div className="p-4 border-b border-slate-200 dark:border-slate-800">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+        <div className="rounded-xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
+          <div className="p-4 border-b border-slate-200 bg-slate-50/75">
+            <h3 className="text-sm font-bold text-slate-900">
               Pending Invitations ({invitations.length})
             </h3>
           </div>
 
-          <div className="divide-y divide-slate-100 dark:divide-slate-800/60">
+          <div className="divide-y divide-slate-100">
             {invitations.map((inv) => (
               <div
                 key={inv._id}
-                className="p-3.5 flex items-center justify-between gap-4 text-xs"
+                className="p-3.5 flex items-center justify-between gap-3 text-xs"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                  <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
                     <Mail className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-800 dark:text-slate-200">{inv.email}</p>
-                    <p className="text-[11px] text-slate-400">
-                      Role: <span className="capitalize">{inv.role}</span> • Invited by{" "}
+                    <p className="font-bold text-slate-800">{inv.email}</p>
+                    <p className="text-[11px] text-slate-500">
+                      Role: <span className="capitalize font-semibold text-slate-700">{inv.role}</span> • Invited by{" "}
                       {inv.invitedBy?.name || "Admin"}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] text-slate-400 font-mono">
+                  <span className="text-[11px] text-slate-400 font-mono">
                     Expires {new Date(inv.expiresAt).toLocaleDateString()}
                   </span>
                   <button
                     onClick={() => handleCancelInvitation(inv._id)}
-                    className="p-1 text-slate-400 hover:text-rose-600 transition"
+                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded-md hover:bg-rose-50 transition"
                     title="Cancel Invitation"
                   >
                     <X className="w-4 h-4" />
@@ -303,14 +308,14 @@ export default function TeamManagement() {
       >
         <form onSubmit={handleSendInvite} className="space-y-4">
           {inviteError && (
-            <div className="p-3 rounded-lg text-xs bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+            <div className="p-3 rounded-xl text-xs bg-rose-50 text-rose-700 border border-rose-200 font-medium">
               {inviteError}
             </div>
           )}
 
           {inviteSuccess && (
-            <div className="p-3 rounded-lg text-xs bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center gap-2">
-              <Check className="w-4 h-4" />
+            <div className="p-3 rounded-xl text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-2 font-medium">
+              <Check className="w-4 h-4 text-emerald-600" />
               <span>{inviteSuccess}</span>
             </div>
           )}
@@ -335,7 +340,7 @@ export default function TeamManagement() {
             ]}
           />
 
-          <div className="flex items-center justify-end gap-3 pt-3">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
             <Button
               variant="outline"
               onClick={() => setInviteModal(false)}

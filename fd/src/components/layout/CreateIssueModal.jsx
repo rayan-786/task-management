@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { X, Loader2 } from "lucide-react";
 import API from "../../api";
 import { useWorkspace } from "../../context/WorkspaceContext";
 import Modal from "../ui/Modal";
@@ -110,12 +109,12 @@ export default function CreateIssueModal({ isOpen, onClose, onCreated }) {
     <Modal isOpen={isOpen} onClose={onClose} title="Create New Issue" maxWidth="max-w-2xl">
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="p-3 text-xs rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+          <div className="p-3 text-xs rounded-lg bg-rose-50 text-rose-700 border border-rose-200 font-medium">
             {error}
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
           <Select
             label="Project *"
             value={projectId}
@@ -146,13 +145,13 @@ export default function CreateIssueModal({ isOpen, onClose, onCreated }) {
 
         <Textarea
           label="Description"
-          placeholder="Add details, acceptance criteria, or context (Markdown supported)..."
-          rows={4}
+          placeholder="Add details, acceptance criteria, or context..."
+          rows={3}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
           <Select
             label="Status"
             value={status}
@@ -193,7 +192,7 @@ export default function CreateIssueModal({ isOpen, onClose, onCreated }) {
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
           <Select
             label="Sprint"
             value={sprint}
@@ -232,7 +231,7 @@ export default function CreateIssueModal({ isOpen, onClose, onCreated }) {
           onChange={(e) => setLabels(e.target.value)}
         />
 
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
           <Button variant="outline" onClick={onClose} disabled={loading}>
             Cancel
           </Button>

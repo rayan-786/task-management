@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { CheckSquare, Calendar, Filter } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import { CheckSquare, Calendar, CheckCircle2 } from "lucide-react";
 import API from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useWorkspace } from "../context/WorkspaceContext";
 import { StatusBadge, PriorityBadge, IssueTypeBadge } from "../components/ui/Badge";
 import IssueDetailDrawer from "../components/issues/IssueDetailDrawer";
+import { TableSkeleton } from "../components/ui/Skeleton";
 
 export default function MyTasks() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const { activeWorkspace } = useWorkspace();
@@ -45,22 +45,25 @@ export default function MyTasks() {
       ? issues.filter((i) => i.status !== "done")
       : issues.filter((i) => i.status === statusFilter);
 
+  if (loading) {
+    return <TableSkeleton />;
+  }
+
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">
             Assigned to Me
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Personal focus view of all issues assigned to you across all projects in{" "}
-            <strong>{activeWorkspace?.name}</strong>.
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Personal focus view of all issues assigned to you across <strong>{activeWorkspace?.name}</strong>.
           </p>
         </div>
 
         {/* Filter pills */}
-        <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg text-xs font-semibold">
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold self-start sm:self-auto overflow-x-auto max-w-full">
           {[
             { id: "all", label: "All" },
             { id: "open", label: "Open" },
@@ -70,10 +73,10 @@ export default function MyTasks() {
             <button
               key={tab.id}
               onClick={() => setStatusFilter(tab.id)}
-              className={`px-3 py-1 rounded-md transition ${
+              className={`px-3 py-1.5 rounded-lg transition whitespace-nowrap ${
                 statusFilter === tab.id
-                  ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-2xs"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+                  ? "bg-white text-slate-900 shadow-2xs font-bold"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               {tab.label}
@@ -82,21 +85,21 @@ export default function MyTasks() {
         </div>
       </div>
 
-      {/* Issues Table */}
-      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+      {/* Issues Table Container */}
+      <div className="rounded-xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+          <table className="w-full text-left text-xs border-collapse min-w-[600px]">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
+              <tr className="border-b border-slate-200 bg-slate-50/75 text-slate-500 font-bold uppercase tracking-wider text-[11px]">
                 <th className="py-3 px-4 w-28">Key</th>
                 <th className="py-3 px-4">Title</th>
                 <th className="py-3 px-4 w-36">Project</th>
                 <th className="py-3 px-4 w-32">Status</th>
                 <th className="py-3 px-4 w-28">Priority</th>
-                <th className="py-3 px-4 w-28">Due Date</th>
+                <th className="py-3 px-4 w-32">Due Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+            <tbody className="divide-y divide-slate-100">
               {filteredIssues.map((issue) => (
                 <tr
                   key={issue._id}
@@ -104,19 +107,19 @@ export default function MyTasks() {
                     setSelectedIssueKey(issue.key);
                     setSearchParams({ issueKey: issue.key });
                   }}
-                  className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer"
+                  className="hover:bg-slate-50/80 transition cursor-pointer group"
                 >
-                  <td className="py-3 px-4 font-mono font-semibold text-blue-600 dark:text-blue-400">
+                  <td className="py-3 px-4 font-mono font-bold text-blue-600">
                     <div className="flex items-center gap-1.5">
                       <IssueTypeBadge type={issue.type} />
                       <span>{issue.key}</span>
                     </div>
                   </td>
-                  <td className="py-3 px-4 font-medium text-slate-800 dark:text-slate-200">
+                  <td className="py-3 px-4 font-medium text-slate-900 group-hover:text-blue-600 transition">
                     <span className="truncate block max-w-md">{issue.title}</span>
                   </td>
-                  <td className="py-3 px-4 text-slate-500">
-                    <span className="font-semibold text-slate-700 dark:text-slate-300">
+                  <td className="py-3 px-4 text-slate-600">
+                    <span className="font-semibold text-slate-800">
                       {issue.project?.name}
                     </span>
                   </td>
@@ -128,8 +131,8 @@ export default function MyTasks() {
                   </td>
                   <td className="py-3 px-4 text-slate-500">
                     {issue.dueDate ? (
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-slate-400" />
+                      <span className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-slate-400" />
                         <span>{new Date(issue.dueDate).toLocaleDateString()}</span>
                       </span>
                     ) : (
@@ -143,8 +146,10 @@ export default function MyTasks() {
         </div>
 
         {filteredIssues.length === 0 && !loading && (
-          <div className="p-12 text-center text-sm text-slate-400">
-            No tasks found matching "{statusFilter}".
+          <div className="p-12 text-center text-xs text-slate-400 space-y-1">
+            <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto mb-2" />
+            <p className="font-bold text-slate-700">No tasks found</p>
+            <p>No issues match the "{statusFilter}" filter.</p>
           </div>
         )}
       </div>
